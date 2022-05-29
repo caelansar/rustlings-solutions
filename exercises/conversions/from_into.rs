@@ -38,30 +38,18 @@ impl From<&str> for Person {
         if s.len() == 0 {
             Person::default()
         } else {
-            let mut split = s.split(",");
-            let name = split.next();
+            // let mut split = s.split(",");
+            let mut splits: Vec<_> = s.splitn(2, ",").collect();
+            let name = splits.get(0);
             if name.is_none() || (name.unwrap().len() == 0) {
                 Person::default()
+            } else if let Some(age) = splits.get(1) {
+                age.parse::<usize>().map_or(Person::default(), |x| Person {
+                    name: name.unwrap().to_string(),
+                    age: x,
+                })
             } else {
-                let age = split.next();
-                if age.is_none() || (name.unwrap().len() == 0) {
-                    Person::default()
-                } else {
-                    if split.count() > 0 {
-                        Person::default()
-                    } else {
-                        let age = age.unwrap();
-                        let age = age.parse::<usize>();
-                        if age.is_err() {
-                            Person::default()
-                        } else {
-                            Person {
-                                name: name.unwrap().to_string(),
-                                age: age.unwrap(),
-                            }
-                        }
-                    }
-                }
+                Person::default()
             }
         }
     }
